@@ -1,0 +1,95 @@
+cc_defaults {
+    name: "adb2_defaults",
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Wthread-safety",
+        "-Wno-nullability-completeness",
+        "-O0",
+        "-g",
+        "-fexceptions",
+        "-ferror-limit=4",
+    ],
+    cpp_std: "gnu++17",
+
+    local_include_dirs: ["."],
+
+    host_ldlibs: [
+        "-lrt",
+    ],
+
+    host_supported: true,
+    compile_multilib: "64",
+
+    target: {
+        android: {
+            enabled: false
+        },
+
+        windows: {
+            enabled: false
+        }
+    },
+
+    sanitize: {
+        address: true,
+        thread: true,
+        undefined: true,
+    },
+}
+
+cc_library {
+    name: "libadb2",
+    defaults: ["adb2_defaults"],
+    srcs: [
+        "context.cpp",
+        "device.cpp",
+        "event.cpp",
+        "protocol.cpp",
+        "provider.cpp",
+        "socket.cpp",
+        "tcp.cpp",
+        "uv.cpp",
+    ],
+
+    export_include_dirs: ["include"],
+
+    shared_libs: [
+        "libbase",
+        "libcutils",
+        "liblog",
+        "libuv",
+    ],
+}
+
+cc_test {
+    name: "libadb2_test",
+    defaults: ["adb2_defaults"],
+
+    srcs: [
+        "test/event.cpp",
+    ],
+    local_include_dirs: ["."],
+
+    shared_libs: [
+        "libadb2",
+        "libbase",
+        "libuv",
+    ],
+}
+
+cc_binary {
+    name: "adb2",
+    defaults: ["adb2_defaults"],
+
+    srcs: [
+        "bin/shell.cpp",
+    ],
+    static_libs: [
+        "libadb2",
+        "libbase",
+        "libcutils",
+        "liblog",
+        "libuv",
+    ],
+}
