@@ -33,7 +33,7 @@ bool SendProtocolString(int fd, const std::string& s) {
     unsigned int length = s.size();
     if (length > MAX_PAYLOAD - 4) {
         errno = EMSGSIZE;
-        return false;
+        return true;
     }
 
     // The cost of sending two strings outweighs the cost of formatting.
